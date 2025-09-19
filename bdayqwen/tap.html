@@ -1,0 +1,424 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Tap to Begin 💖</title>
+  <link rel="stylesheet" href="style.css" />
+  <style>
+    body, html {
+      margin: 0;
+      padding: 0;
+      width: 100%;
+      height: 100%;
+      overflow: hidden;
+    }
+
+    #tap-container {
+      width: 100vw;
+      height: 100vh;
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      align-items: center;
+      background: linear-gradient(135deg, #fff0f3, #ffb6c1, #ff99cc, #ec6a88);
+      cursor: pointer;
+      position: relative;
+      z-index: 2;
+    }
+
+    .doodle {
+      position: absolute;
+      font-size: 0;
+      opacity: 0;
+      pointer-events: none;
+      animation: popIn 0.6s forwards, drift 3s infinite alternate 0.6s;
+      transform-origin: center;
+      z-index: 100;
+    }
+
+    @keyframes popIn {
+      0% { transform: scale(0) rotate(-10deg); opacity: 0; }
+      100% { transform: scale(1) rotate(0deg); opacity: 1; }
+    }
+
+    @keyframes drift {
+      0% { transform: translate(0, 0); }
+      100% { transform: translate(15px, -25px); }
+    }
+
+    #instruction {
+      position: absolute;
+      bottom: 60px;
+      font-size: 1.5rem;
+      color: white;
+      font-family: 'Comic Sans MS', cursive;
+      text-shadow: 0 2px 5px rgba(0,0,0,0.3);
+      z-index: 3;
+    }
+
+    /* Background cute elements */
+    .bg-element {
+      position: absolute;
+      color: rgba(255,255,255,0.3);
+      z-index: 1;
+      animation: float-slow infinite alternate;
+      font-size: 2rem;
+    }
+
+    @keyframes float-slow {
+      0% { transform: translateY(0); }
+      100% { transform: translateY(-15px); }
+    }
+
+    /* Static cat as IMAGE (clickable) */
+    .static-cat-img {
+      position: absolute;
+      top: 50%;
+      left: 50%;
+      transform: translate(-50%, -50%);
+      width: 150px;
+      height: 150px;
+      border-radius: 50%;
+      box-shadow: 0 0 20px rgba(255,105,180,0.5);
+      z-index: 5;
+      cursor: pointer;
+      transition: transform 0.2s ease;
+    }
+
+    .static-cat-img:active {
+      transform: translate(-50%, -50%) scale(1.15);
+    }
+
+    /* Heart Frame */
+    .heart-frame {
+      position: absolute;
+      width: 200px;
+      height: 200px;
+      background: url('https://cdn-icons-png.flaticon.com/128/176/176178.png') no-repeat center;
+      background-size: contain;
+      z-index: 1000;
+      opacity: 0;
+      transition: all 1s ease;
+      transform: scale(0.8);
+    }
+
+    .heart-frame img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      border-radius: 50%;
+    }
+
+    /* Typewriter effect for HBD text */
+    .typewriter {
+      font-size: 2rem;
+      color: white;
+      font-family: 'Comic Sans MS', cursive;
+      overflow: hidden;
+      border-right: 4px solid #ff6699;
+      white-space: nowrap;
+      margin: 0 auto;
+      width: 0;
+      animation: typing 3s steps(30) 1s forwards, blink-caret 0.75s step-end infinite;
+    }
+
+    @keyframes typing { from { width: 0 } to { width: 100% } }
+    @keyframes blink-caret { from, to { border-color: transparent } 50% { border-color: #ff6699 } }
+
+    /* Final instruction after HBD */
+    .final-instruction {
+      position: absolute;
+      bottom: 80px;
+      font-size: 1.5rem;
+      color: white;
+      font-family: 'Comic Sans MS', cursive;
+      text-shadow: 0 2px 5px rgba(0,0,0,0.3);
+      opacity: 0;
+      transition: opacity 1s ease;
+      z-index: 9999;
+    }
+
+    /* === Popup Video === */
+    .popup {
+      display: none;
+      position: fixed;
+      z-index: 2000;
+      left: 0; top: 0;
+      width: 100%; height: 100%;
+      background-color: rgba(0,0,0,0.7);
+      justify-content: center;
+      align-items: center;
+    }
+
+    .popup-content {
+      position: relative;
+      background: #fff;
+      padding: 10px;
+      border-radius: 12px;
+      max-width: 90%;
+      width: 400px;
+      box-shadow: 0 4px 20px rgba(0,0,0,0.4);
+      animation: popIn 0.4s ease;
+    }
+
+    .popup-content video {
+      width: 100%;
+      border-radius: 10px;
+    }
+
+    .close-btn {
+      position: absolute;
+      top: -12px;
+      right: -12px;
+      background: #ff4d6d;
+      color: white;
+      font-size: 20px;
+      font-weight: bold;
+      border-radius: 50%;
+      width: 30px;
+      height: 30px;
+      text-align: center;
+      line-height: 28px;
+      cursor: pointer;
+      box-shadow: 0 2px 8px rgba(0,0,0,0.4);
+    }
+  </style>
+</head>
+<body id="tap-page">
+
+  <!-- Static Cat (clickable) -->
+  <img 
+    src="https://media1.giphy.com/media/v1.Y2lkPTc5MGI3NjExNzV1dHU1d3Q0Zjg0bWMxYnRwazg5NmJ5emZhbWQ2YTkxdWZwbTJsayZlcD12MV9pbnRlcm5hbF9naWZfYnlfaWQmY3Q9Zw/3UPNs8vXyJESQ/giphy.gif" 
+    alt="Cute Cat"
+    class="static-cat-img"
+    onclick="this.style.transform='translate(-50%, -50%) scale(1.15)'; setTimeout(() => { this.style.transform='translate(-50%, -50%)'; }, 200);"
+  >
+
+  <!-- Background doodles -->
+  <div class="bg-element" style="top: 10%; left: 10%;">🐱</div>
+  <div class="bg-element" style="top: 15%; right: 15%;">💌</div>
+  <div class="bg-element" style="bottom: 20%; left: 20%;">🎀</div>
+  <div class="bg-element" style="bottom: 30%; right: 25%;">🎈</div>
+  <div class="bg-element" style="top: 40%; left: 5%;">🎂</div>
+  <div class="bg-element" style="top: 25%; right: 5%;">🎁</div>
+  <div class="bg-element" style="bottom: 10%; left: 40%;">🌸</div>
+  <div class="bg-element" style="bottom: 15%; right: 40%;">💐</div>
+
+  <!-- Main container -->
+  <div id="tap-container">
+    <p id="instruction">Tap to unlock your surprise… 💌</p>
+  </div>
+
+  <!-- Floating hearts & animals -->
+  <div class="hearts"></div>
+  <img src="https://cdn-icons-png.flaticon.com/128/3075/3075563.png" alt="Cat" class="cute cat">
+  <img src="https://cdn-icons-png.flaticon.com/128/3075/3075596.png" alt="Rabbit" class="cute rabbit">
+
+  <!-- === Popup Video === -->
+  <div id="video-popup" class="popup">
+    <div class="popup-content">
+      <span class="close-btn">&times;</span>
+      <video id="surprise-video" controls>
+        <source src="assets/owo.mp4" type="video/mp4">
+        Your browser does not support the video tag.
+      </video>
+    </div>
+  </div>
+
+  <!-- Confetti CDN -->
+  <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.5.1/dist/confetti.browser.min.js"></script>
+
+  <script>
+    document.addEventListener("DOMContentLoaded", function () {
+      let count = 0;
+      const max = 19;
+      const container = document.getElementById('tap-container');
+      const instruction = document.getElementById('instruction');
+      const catImg = document.querySelector('.static-cat-img');
+
+      const backgroundMusic = new Audio('sound/background-music.mp3');
+      backgroundMusic.loop = true;
+      backgroundMusic.volume = 0.3;
+
+      const confettiSound = new Audio('sound/confetti-pop.mp3');
+      confettiSound.volume = 0.5;
+
+      if (!container || !instruction) {
+        console.error("Element not found!");
+        return;
+      }
+
+      const doodles = ['❤️','💕','💖','🐱','🐰','🎁','🎂','💌','🎀','🎈','💐','🌸','🌹','🎊','🎉','💝','😻','🍫','🧸','🕊️','🕯️','🧚‍♀️'];
+      const messages = ["Just a few more! 💕","You're doing great! 🌸","Almost there... 🎀","So close! 💝","YES! Keep going! 💞","One step closer to love! 💓"];
+
+      function playBackgroundMusic() {
+        backgroundMusic.play().catch(e => {
+          console.log("Musik belum bisa dimainkan — menunggu interaksi...", e);
+        });
+      }
+
+      function handleTap() {
+        if (count === 0) playBackgroundMusic();
+        count++;
+
+        // === TAP KE-2: MUNCULKAN POPUP VIDEO ===
+        if (count === 5) {
+          const popup = document.getElementById('video-popup');
+          const closeBtn = document.querySelector('.close-btn');
+          const video = document.getElementById('surprise-video');
+
+          popup.style.display = 'flex';
+
+          closeBtn.onclick = () => {
+            popup.style.display = 'none';
+            video.pause();
+          };
+
+          popup.onclick = (e) => {
+            if (e.target === popup) {
+              popup.style.display = 'none';
+              video.pause();
+            }
+          };
+          return; // stop supaya tidak langsung lanjut doodle
+        }
+
+        if (count <= max) {
+          // Doodle muncul
+          const emoji = doodles[Math.floor(Math.random() * doodles.length)];
+          const doodle = document.createElement('div');
+          doodle.className = 'doodle';
+          doodle.textContent = emoji;
+          let x, y;
+          do {
+            x = Math.random() * 80 + 10;
+            y = Math.random() * 60 + 5;
+          } while (y > 65);
+          doodle.style.left = `${x}vw`;
+          doodle.style.top = `${y}vh`;
+          doodle.style.fontSize = `${Math.random() * 2 + 1.5}rem`;
+          document.body.appendChild(doodle);
+
+          if (count > 5 && count % 3 === 0) {
+            instruction.textContent = messages[Math.floor(Math.random() * messages.length)];
+          }
+
+          // === TAP KE-19: FINAL SURPRISE ===
+          if (count === max) {
+            document.body.style.margin = '0';
+            document.body.style.padding = '0';
+            document.body.style.width = '100%';
+            document.body.style.height = '100dvh';
+            document.body.style.overflow = 'hidden';
+            document.body.style.background = 'linear-gradient(135deg, #fff0f3, #ffb6c1, #ff99cc)';
+            document.body.style.position = 'relative';
+
+            catImg.style.display = 'none';
+            document.querySelectorAll('.doodle').forEach(el => el.remove());
+            instruction.style.display = 'none';
+
+            setTimeout(() => {
+              confetti({
+                particleCount: 200,
+                spread: 180,
+                origin: { y: 0.6 },
+                colors: ['#ff99cc', '#ff6699', '#ffffff', '#ffb6c1'],
+                gravity: 0.5,
+                scalar: 2
+              });
+              confettiSound.currentTime = 0;
+              confettiSound.play().catch(e => console.log("Gagal mainkan suara konfeti:", e));
+            }, 500);
+
+            const photo = document.createElement('img');
+            photo.src = 'assets/kiana1.png';
+            photo.alt = "Kita bersama";
+            photo.style.position = 'absolute';
+            photo.style.left = '50%';
+            photo.style.top = '15%';
+            photo.style.transform = 'translateX(-50%)';
+            photo.style.width = '80%';
+            photo.style.maxWidth = '300px';
+            photo.style.borderRadius = '12px';
+            photo.style.boxShadow = '0 4px 15px rgba(0,0,0,0.2)';
+            photo.style.opacity = '0';
+            photo.style.transition = 'opacity 1s ease';
+            photo.style.zIndex = '9997';
+            photo.style.animation = 'floatPhoto 3s infinite alternate ease-in-out';
+            document.body.appendChild(photo);
+
+            if (!document.getElementById('photo-animation')) {
+              const style = document.createElement('style');
+              style.id = 'photo-animation';
+              style.textContent = `
+                @keyframes floatPhoto {
+                  0% { transform: translateX(-50%) translateY(0) rotate(-1deg); }
+                  50% { transform: translateX(-50%) translateY(-8px) rotate(1deg); }
+                  100% { transform: translateX(-50%) translateY(0) rotate(-1deg); }
+                }`;
+              document.head.appendChild(style);
+            }
+            setTimeout(() => { photo.style.opacity = '1'; }, 600);
+
+            const caption = document.createElement('div');
+            caption.innerHTML = "Happy Birthday,<br>Kianaaa 💖";
+            caption.style.position = 'absolute';
+            caption.style.left = '50%';
+            caption.style.transform = 'translateX(-50%)';
+            caption.style.top = 'calc(15% + 310px)';
+            caption.style.fontSize = '2.2rem';
+            caption.style.color = 'white';
+            caption.style.fontFamily = "'Comic Sans MS', cursive";
+            caption.style.textAlign = 'center';
+            caption.style.opacity = '0';
+            caption.style.transition = 'opacity 1s ease';
+            caption.style.zIndex = '9998';
+            caption.style.textShadow = '0 2px 8px rgba(0,0,0,0.7)';
+            caption.style.animation = 'floatText 4s infinite alternate ease-in-out';
+            document.body.appendChild(caption);
+
+            if (!document.getElementById('text-animation')) {
+              const style = document.createElement('style');
+              style.id = 'text-animation';
+              style.textContent = `
+                @keyframes floatText {
+                  0% { transform: translateX(-50%) translateY(0) rotate(-2deg); }
+                  50% { transform: translateX(-50%) translateY(-6px) rotate(1deg); }
+                  100% { transform: translateX(-50%) translateY(0) rotate(-2deg); }
+                }`;
+              document.head.appendChild(style);
+            }
+            setTimeout(() => { caption.style.opacity = '1'; }, 1200);
+
+            setTimeout(() => {
+              const finalInstruction = document.createElement('div');
+              finalInstruction.textContent = "Tap to see what I made for you ✨";
+              finalInstruction.style.position = 'absolute';
+              finalInstruction.style.bottom = '10%';
+              finalInstruction.style.left = '50%';
+              finalInstruction.style.transform = 'translateX(-50%)';
+              finalInstruction.style.fontSize = '0.9rem';
+              finalInstruction.style.color = 'white';
+              finalInstruction.style.fontFamily = "'Comic Sans MS', cursive";
+              finalInstruction.style.opacity = '0';
+              finalInstruction.style.transition = 'opacity 1s ease';
+              finalInstruction.style.zIndex = '9999';
+              finalInstruction.style.textShadow = '0 1px 3px rgba(0,0,0,0.5)';
+              document.body.appendChild(finalInstruction);
+              setTimeout(() => { finalInstruction.style.opacity = '1'; }, 100);
+
+              container.onclick = () => {
+                window.location.href = 'index.html';
+              };
+            }, 3000);
+          }
+        }
+      }
+
+      container.addEventListener('click', handleTap);
+      catImg.addEventListener('click', handleTap);
+    });
+  </script>
+</body>
+</html>

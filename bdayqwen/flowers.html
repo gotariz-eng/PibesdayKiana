@@ -1,0 +1,227 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Virtual Flowers 🌹</title>
+  <style>
+    /* Full screen tanpa scroll */
+    body#flowers-page {
+      margin: 0;
+      padding: 0;
+      height: 100vh;
+      overflow: hidden;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      background: linear-gradient(to bottom, #fef0f5, #ffd6e7);
+      font-family: 'Comic Sans MS', cursive;
+      position: relative;
+    }
+
+    /* Judul di atas */
+    #flowers-title {
+      margin-top: 20px;
+      text-align: center;
+      font-size: 22px;
+      color: #ff4d8d;
+      width: 90%;
+      max-width: 400px;
+      z-index: 2;
+      text-shadow: 0 1px 3px rgba(0,0,0,0.1);
+    }
+
+    /* Container utama */
+    .flowers-container {
+      flex: 1;
+      width: 100%;
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      align-items: center;
+      position: relative;
+      padding: 20px;
+      box-sizing: border-box;
+    }
+
+    /* Animasi emoji jatuh */
+    .falling-emojis {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      pointer-events: none;
+      z-index: 1;
+    }
+
+    .emoji {
+      position: absolute;
+      font-size: 24px;
+      opacity: 0.8;
+      animation: fall linear forwards;
+      z-index: 1;
+    }
+
+    @keyframes fall {
+      0% {
+        transform: translateY(-50px) rotate(0deg);
+        opacity: 0;
+      }
+      10% {
+        opacity: 1;
+      }
+      90% {
+        opacity: 1;
+      }
+      100% {
+        transform: translateY(100vh) rotate(360deg);
+        opacity: 0;
+      }
+    }
+
+    /* GIF Bunga Melekar - di tengah */
+    .blooming-flower {
+      width: 200px;
+      border-radius: 16px;
+      box-shadow: 0 8px 20px rgba(0,0,0,0.15);
+      animation: popIn 0.8s ease-out;
+      z-index: 3;
+    }
+
+    @keyframes popIn {
+      0% { transform: scale(0.3); opacity: 0; }
+      70% { transform: scale(1.1); }
+      100% { transform: scale(1); opacity: 1; }
+    }
+
+    /* Hiasan lucu */
+    .cute {
+      position: absolute;
+      width: 45px;
+      opacity: 0.8;
+      filter: drop-shadow(2px 2px 4px rgba(0,0,0,0.2));
+      z-index: 2;
+    }
+    .cat { bottom: 20%; left: 10%; }
+    .rabbit { bottom: 20%; right: 10%; }
+
+    /* Back button */
+    .back-btn {
+      position: fixed;
+      bottom: 45px;
+      left: 50%;
+      transform: translateX(-50%);
+      padding: 12px 28px;
+      border: none;
+      border-radius: 30px;
+      background: #ff5d8f;
+      color: white;
+      font-size: 16px;
+      font-weight: bold;
+      cursor: pointer;
+      box-shadow: 0 4px 10px rgba(0,0,0,0.2);
+      transition: all 0.3s;
+      z-index: 10;
+    }
+
+    .back-btn:hover {
+      background: #ff4d8d;
+      transform: translateX(-50%) scale(1.05);
+    }
+  </style>
+</head>
+<body id="flowers-page">
+  <!-- Judul -->
+  <h1 id="flowers-title">A bouquet of flowers, only for you 🌹</h1>
+
+  <!-- Container bunga -->
+  <div class="flowers-container">
+    <!-- GIF di tengah -->
+    <img 
+      src="https://media.giphy.com/media/v1.Y2lkPTc5MGI3NjExbzl5M2x6b2Nwd2NrYXJ5cTZweDJzeXRjOXF1NGRnNmppajAyZGZ3byZlcD12MV9zdGlja2Vyc19zZWFyY2gmY3Q9cw/hkSg1UB7qtviqxk1Aw/giphy.gif" 
+      alt="Blooming Flower Animation"
+      class="blooming-flower"
+    >
+    
+    <!-- Hiasan lucu -->
+    <img src="https://cdn-icons-png.flaticon.com/128/3075/3075563.png" alt="Cat" class="cute cat">
+    <img src="https://cdn-icons-png.flaticon.com/128/3075/3075596.png" alt="Rabbit" class="cute rabbit">
+  </div>
+
+  <!-- Emoji jatuh: bunga & eskrim -->
+  <div class="falling-emojis" id="falling-emojis"></div>
+
+  <!-- Back to Menu -->
+  <button onclick="goToMenu()" class="back-btn">Back to Menu</button>
+
+  <script>
+
+    // --- 🔊 BACKSOUND (Musik Latar) ---
+  const backgroundMusic = new Audio('sound/background-music.mp3'); // Pastikan file ini ada
+  backgroundMusic.loop = true;
+  backgroundMusic.volume = 0.6; // Sesuaikan volume (0.0 - 1.0)
+
+  // Saat halaman dimuat
+  window.addEventListener('load', () => {
+    const isMusicPlaying = localStorage.getItem('musicPlaying') === 'true';
+
+    if (isMusicPlaying) {
+      backgroundMusic.play().catch(e => {
+        console.log("Autoplay diblokir — menunggu interaksi pengguna", e);
+        // Jika autoplay gagal, bisa munculkan tombol "Play Music"
+      });
+    }
+  });
+
+  // Simpan status saat musik diputar/dijeda
+  backgroundMusic.onplay = () => {
+    localStorage.setItem('musicPlaying', 'true');
+  };
+
+  backgroundMusic.onpause = () => {
+    localStorage.setItem('musicPlaying', 'false');
+  };
+
+  // Fungsi untuk memaksa mainkan musik (jika diblokir)
+  function playMusic() {
+    backgroundMusic.play().catch(e => {
+      alert("Silakan klik untuk memutar musik.");
+    });
+  }
+  
+    // Daftar emoji yang jatuh: bunga + eskrim
+    const emojis = ['🌸', '🌹', '🌷', '🌺', '🌼', '💐', '🍦', '🍨', '🧁', '🍭'];
+
+    // Fungsi buat emoji jatuh acak
+    function createEmoji() {
+      const emoji = document.createElement('div');
+      emoji.classList.add('emoji');
+      emoji.innerText = emojis[Math.floor(Math.random() * emojis.length)];
+      
+      // Posisi acak horizontal
+      emoji.style.left = Math.random() * 100 + 'vw';
+      
+      // Durasi animasi acak (5 - 10 detik)
+      const duration = 5 + Math.random() * 5;
+      emoji.style.animationDuration = `${duration}s`;
+      
+      // Tambahkan ke DOM
+      document.getElementById('falling-emojis').appendChild(emoji);
+
+      // Hapus dari DOM setelah selesai (bersihkan memori)
+      setTimeout(() => {
+        emoji.remove();
+      }, duration * 1000);
+    }
+
+    // Jatuhkan emoji tiap 0.8 - 1.5 detik
+    setInterval(createEmoji, Math.random() * 700 + 800);
+
+    // Fungsi back
+    function goToMenu() {
+      window.location.href = "menu.html"; // atau window.history.back();
+    }
+  </script>
+</body>
+</html>

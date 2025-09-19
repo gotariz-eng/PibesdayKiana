@@ -1,0 +1,79 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Capture Moment 💕</title>
+  <link rel="stylesheet" href="style.css" />
+</head>
+<body id="capture-page">
+  <div class="container polaroid-container">
+    <h1 id="capture-title" class="typewriter">Capture of You 💕</h1>
+
+    <div class="polaroids">
+      <div class="polaroid slide-in">
+        <img src="assets/myhappines (24).jpeg" alt="Memory 1" class="tap-img">
+        <p>My Fav 🌸</p>
+      </div>
+      <div class="polaroid slide-in">
+        <img src="assets/myhappines (31).jpeg" alt="Memory 2" class="tap-img">
+        <p>My Fav Again 🏖️</p>
+      </div>
+      <div class="polaroid slide-in">
+        <img src="/assets/kiana2.jpeg" alt="Memory 3" class="tap-img">
+        <p>My Fav Again N Always 😄</p>
+      </div>
+    </div>
+
+    <button onclick="goToMenu()" class="back-btn">Back to Menu</button>
+
+    <div class="hearts"></div>
+    <img src="https://cdn-icons-png.flaticon.com/128/3075/3075563.png" alt="Cat" class="cute cat">
+    <img src="https://cdn-icons-png.flaticon.com/128/3075/3075596.png" alt="Rabbit" class="cute rabbit">
+  </div>
+
+  <script src="script.js"></script>
+  <script>
+  // --- 🔊 BACKSOUND (Musik Latar) ---
+  const backgroundMusic = new Audio('sound/background-music.mp3'); // Pastikan path-nya benar
+  backgroundMusic.loop = true;
+  backgroundMusic.volume = 0.3; // Sesuaikan volume
+
+  // Saat halaman dimuat
+  window.addEventListener('load', () => {
+    const isMusicPlaying = localStorage.getItem('musicPlaying') === 'true';
+
+    if (isMusicPlaying) {
+      backgroundMusic.play().catch(e => {
+        console.log("Autoplay diblokir — menunggu interaksi pengguna", e);
+        // Bisa munculkan tombol "Play Music" jika perlu
+      });
+    }
+  });
+
+  // Simpan status musik
+  backgroundMusic.onplay = () => {
+    localStorage.setItem('musicPlaying', 'true');
+  };
+
+  backgroundMusic.onpause = () => {
+    localStorage.setItem('musicPlaying', 'false');
+  };
+
+  // Fungsi untuk memaksa mainkan musik (bisa dipanggil oleh tombol)
+  function playMusic() {
+    backgroundMusic.play().catch(e => {
+      alert("Silakan klik untuk memutar musik.");
+    });
+  }
+
+  // --- ✨ Efek Tap pada Foto ---
+  document.querySelectorAll(".tap-img").forEach(img => {
+    img.addEventListener("click", () => {
+      img.classList.add("animate-tap");
+      setTimeout(() => img.classList.remove("animate-tap"), 500); // reset efek setelah 0.5 detik
+    });
+  });
+</script>
+</body>
+</html>
