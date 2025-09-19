@@ -1,0 +1,206 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Choose What You Want 💝</title>
+  <link rel="stylesheet" href="style.css" />
+  <style>
+    body {
+      margin: 0;
+      padding: 0;
+      height: 100vh;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      background: linear-gradient(135deg, #ffdde1, #ee9ca7);
+      font-family: 'Comic Sans MS', cursive, sans-serif;
+    }
+
+    .container {
+      text-align: center;
+      position: relative;
+      width: 100%;
+      padding: 20px;
+    }
+
+    .menu-container {
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      align-items: center;
+      gap: 20px;
+    }
+
+    #menu-title {
+      font-size: 2em;
+      margin-bottom: 20px;
+      color: #d6336c;
+      text-shadow: 2px 2px #fff;
+    }
+
+    .menu-buttons {
+      display: flex;
+      flex-direction: column;
+      gap: 15px;
+      width: 100%;
+      max-width: 300px;
+      transform: translateX(20px);
+    }
+
+    .menu-btn {
+      padding: 12px 20px;
+      font-size: 1.2em;
+      border: none;
+      border-radius: 15px;
+      cursor: pointer;
+      background: #ffb6c1;
+      transition: transform 0.2s ease, background 0.3s ease;
+    }
+
+    .menu-btn:hover {
+      background: #ff99aa;
+      transform: scale(1.05);
+    }
+
+    .back-btn {
+      margin-top: 20px;
+      padding: 10px 18px;
+      border-radius: 12px;
+      border: none;
+      background: #d6336c;
+      color: white;
+      cursor: pointer;
+      transition: background 0.3s ease;
+    }
+
+    .back-btn:hover {
+      background: #a1224e;
+    }
+
+    .cute {
+      position: absolute;
+      width: 60px;
+      opacity: 0.8;
+    }
+
+    .cat {
+      bottom: 20px;
+      left: 20px;
+    }
+
+    .rabbit {
+      bottom: 20px;
+      right: 20px;
+    }
+
+    .top-sticker {
+      position: absolute;
+      top: 10px;
+      right: 10px;
+      width: 80px;
+    }
+
+    /* Responsive untuk HP */
+    @media (max-width: 600px) {
+      #menu-title {
+        font-size: 1.5em;
+      }
+
+      .menu-btn {
+        font-size: 1em;
+        padding: 10px 15px;
+      }
+
+      .back-btn {
+        font-size: 0.9em;
+        padding: 8px 14px;
+      }
+
+      .top-sticker {
+        width: 60px; /* lebih kecil di HP */
+      }
+
+      .cute {
+        width: 45px;
+      }
+    }
+  </style>
+</head>
+<body id="menu-page">
+  <div class="container menu-container">
+    <!-- Stiker kecil di pojok kanan atas -->
+    <img src="https://media.giphy.com/media/v1.Y2lkPTc5MGI3NjExamYzY3Zoa2lubnVxOWpyeGZ6ZHJ5eXRsNm1oaG94cWF6aTc2ZzFvZCZlcD12MV9zdGlja2Vyc19zZWFyY2gmY3Q9cw/KOUC1bovOpRANRFrVW/giphy.gif" 
+         alt="Cute Sticker" class="top-sticker">
+
+    <h1 id="menu-title" class="pop-text">Choose what you want 💝</h1>
+
+    <div class="menu-buttons">
+      <button onclick="location.href='capture.html'" class="menu-btn">
+        🎥 Capture Of You 🎥
+      </button>
+      <button onclick="location.href='song.html'" class="menu-btn">
+        🎶 A Song for You 🎶
+      </button>
+      <button onclick="location.href='flowers.html'" class="menu-btn">
+        🌹 Virtual Flowers 🌹
+      </button>
+      <button onclick="location.href='birthday.html'" class="menu-btn">
+        💌 Birthday Message 💌
+      </button>
+    </div>
+
+    <button onclick="goBack()" class="back-btn">Back to Start</button>
+
+    <!-- Icon cute -->
+    <img src="https://cdn-icons-png.flaticon.com/128/3075/3075563.png" alt="Cat" class="cute cat">
+    <img src="https://cdn-icons-png.flaticon.com/128/3075/3075596.png" alt="Rabbit" class="cute rabbit">
+  </div>
+
+  <script>
+  // --- 🔊 BACKSOUND (Musik Latar) ---
+  const backgroundMusic = new Audio('sound/background-music.mp3'); // Pastikan file ini ada
+  backgroundMusic.loop = true;
+  backgroundMusic.volume = 0.3; // 60% volume
+
+  // Saat halaman dimuat
+  window.addEventListener('load', () => {
+    // Cek apakah musik sedang jalan di halaman sebelumnya
+    const isMusicPlaying = localStorage.getItem('musicPlaying') === 'true';
+
+    if (isMusicPlaying) {
+      backgroundMusic.play().catch(e => {
+        console.log("Autoplay diblokir — butuh interaksi pengguna", e);
+        // Jika autoplay gagal, kamu bisa munculkan tombol "Play Music"
+      });
+    }
+  });
+
+  // Simpan status musik saat diputar/dijeda
+  backgroundMusic.onplay = () => {
+    localStorage.setItem('musicPlaying', 'true');
+  };
+
+  backgroundMusic.onpause = () => {
+    localStorage.setItem('musicPlaying', 'false');
+  };
+
+  // Fungsi: paksa mainkan musik (bisa dipanggil oleh tombol jika autoplay diblokir)
+  function playMusic() {
+    backgroundMusic.play().catch(e => {
+      alert("Silakan klik sekali lagi untuk memutar musik.");
+    });
+  }
+
+  // --- 🔙 FUNGSI KEMBALI KE HALAMAN SEBELUMNYA ---
+  function goBack() {
+    // Pastikan status musik disimpan sebelum pindah halaman
+    if (!backgroundMusic.paused) {
+      localStorage.setItem('musicPlaying', 'true');
+    }
+    // Kembali ke halaman tap
+    window.location.href = "tap.html";
+  }
+</script>
+</body>
+</html>

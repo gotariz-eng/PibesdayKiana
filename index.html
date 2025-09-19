@@ -1,0 +1,208 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Hello My Love 💖</title>
+  <link rel="stylesheet" href="style.css" />
+  <style>
+    body {
+      margin: 0;
+      padding: 0;
+      font-family: "Comic Sans MS", cursive, sans-serif;
+      background: linear-gradient(to bottom right, pink, lightcoral);
+      text-align: center;
+      overflow: hidden;
+    }
+
+    .container {
+      position: relative;
+      z-index: 2;
+      padding: 20px;
+    }
+
+    h1 {
+      font-size: 2.5em;
+      color: #fff;
+      margin-bottom: 10px;
+    }
+
+    .cute-gif {
+      display: block;
+      margin: 15px auto;
+      width: 220px;
+      border-radius: 15px;
+      animation: fadeIn 2s ease-in-out;
+    }
+
+    #subtext {
+      font-size: 1.2em;
+      color: #fff;
+      margin-top: 10px;
+    }
+
+    .buttons {
+      margin-top: 20px;
+    }
+
+    .btn {
+      background: white;
+      border: none;
+      padding: 10px 20px;
+      margin: 10px;
+      font-size: 1.1em;
+      border-radius: 20px;
+      cursor: pointer;
+      transition: transform 0.2s;
+    }
+
+    .btn:hover {
+      transform: scale(1.1);
+    }
+
+    .yes-btn {
+      color: deeppink;
+    }
+
+    .no-btn {
+      color: gray;
+    }
+
+    .cute {
+      width: 80px;
+      position: absolute;
+    }
+
+    .cat {
+      bottom: 10px;
+      left: 10px;
+    }
+
+    .rabbit {
+      bottom: 10px;
+      right: 10px;
+    }
+
+    /* Stiker muncul setelah pilih No */
+    #noSection {
+      display: none;
+      animation: fadeIn 1.5s ease-in-out;
+    }
+
+    #noSticker {
+      margin: 20px auto 10px auto;
+      width: 250px;
+      border-radius: 15px;
+      display: block;
+    }
+
+    #noText {
+      color: white;
+      font-size: 1.3em;
+      margin-top: 10px;
+    }
+
+    @keyframes fadeIn {
+      from { opacity: 0; transform: scale(0.9); }
+      to { opacity: 1; transform: scale(1); }
+    }
+  </style>
+</head>
+<body id="page1">
+  <div class="container" id="mainContent">
+    <h1 id="greeting" class="typewriter">Hello My Love 💖</h1>
+
+    <!-- GIF utama -->
+    <img src="https://media.giphy.com/media/v1.Y2lkPWVjZjA1ZTQ3OWNzZTBibGM4bDBxdGZqcGpib2hoOWNzZTQ4b3BoY2hrNWt1bXl5eiZlcD12MV9naWZzX3NlYXJjaCZjdD1n/TKSLd3q4TFh9jKzdQX/giphy.gif" 
+         alt="Cute Gif" 
+         class="cute-gif">
+
+    <p id="subtext" class="fade-in">Do you want to see what I made for you?</p>
+
+    <div class="buttons">
+      <button onclick="goToMenu()" class="btn yes-btn">Yes 💕</button>
+      <button onclick="goToNo()" class="btn no-btn">No 😢</button>
+    </div>
+
+    <!-- Hearts floating -->
+    <div class="hearts"></div>
+    <!-- Cute animals -->
+    <img src="https://cdn-icons-png.flaticon.com/128/3075/3075563.png" alt="Cat" class="cute cat">
+    <img src="https://cdn-icons-png.flaticon.com/128/3075/3075596.png" alt="Rabbit" class="cute rabbit">
+  </div>
+
+  <!-- Bagian khusus kalau pilih No -->
+  <div id="noSection">
+    <img id="noSticker" src="https://media.giphy.com/media/v1.Y2lkPTc5MGI3NjExOXhmaThxZzJpdG4yczVvangybnJ0NDB1NGxmM24wMzV2Y3d3amFlbCZlcD12MV9zdGlja2Vyc19zZWFyY2gmY3Q9cw/y0LCWv0zGYesYRjZ2n/giphy.gif" alt="No Sticker">
+    <p id="noText">I’ll promise you’ll like it 💖</p>
+    <button onclick="goToMenu()" class="btn yes-btn">Ya mauuu liat 💕</button>
+  </div>
+
+  <script>
+  // --- 🔊 BACKSOUND MANAGEMENT ---
+  
+  // Inisialisasi audio
+  const backgroundMusic = new Audio('sound/background-music.mp3'); // Ganti dengan path file kamu
+  backgroundMusic.loop = true;
+  backgroundMusic.volume = 0.3;
+
+  // Cek status musik dari localStorage saat halaman dimuat
+  window.addEventListener('load', () => {
+    const isMusicPlaying = localStorage.getItem('musicPlaying') === 'true';
+    
+    if (isMusicPlaying) {
+      backgroundMusic.play().catch(e => {
+        console.log("Autoplay diblokir — menunggu interaksi");
+      });
+    }
+  });
+
+  // Simpan status musik saat diputar/dijeda
+  backgroundMusic.onplay = () => {
+    localStorage.setItem('musicPlaying', 'true');
+  };
+
+  backgroundMusic.onpause = () => {
+    localStorage.setItem('musicPlaying', 'false');
+  };
+
+  // Fungsi: mulai musik (bisa dipanggil saat klik)
+  function playBackgroundMusic() {
+    backgroundMusic.play().catch(e => {
+      console.log("Gagal mainkan musik, menunggu interaksi...", e);
+    });
+  }
+
+  // --- 🎯 FUNGSI NAVIGASI ---
+
+  // Fungsi: kembali ke menu
+  function goToMenu() {
+    // Pastikan musik tetap berjalan saat pindah halaman
+    if (!backgroundMusic.paused) {
+      localStorage.setItem('musicPlaying', 'true');
+    }
+    window.location.href = "menu.html";
+  }
+
+  // Fungsi: saat memilih "Tidak"
+  function goToNo() {
+    // Sembunyikan konten utama
+    const mainContent = document.getElementById("mainContent");
+    if (mainContent) {
+      mainContent.style.display = "none";
+    }
+
+    // Tampilkan bagian respons "Tidak"
+    const noSection = document.getElementById("noSection");
+    if (noSection) {
+      noSection.style.display = "block";
+    }
+
+    // 🔊 Pastikan backsound tetap jalan
+    if (localStorage.getItem('musicPlaying') !== 'false') {
+      playBackgroundMusic();
+    }
+  }
+</script>
+</body>
+</html>

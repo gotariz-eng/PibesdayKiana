@@ -1,0 +1,266 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>PibesDayyManiesss 💖</title>
+  <style>
+    /* Full screen tanpa scroll */
+    body#birthday-page {
+      margin: 0;
+      padding: 0;
+      height: 100vh;
+      overflow: hidden;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      background: linear-gradient(to bottom, #fef0f5, #ffd6e7);
+      font-family: 'Comic Sans MS', cursive;
+      position: relative;
+    }
+
+    /* Judul di paling atas */
+    #page-title {
+      margin-top: 15px;
+      text-align: center;
+      font-size: 24px;
+      color: #ff4d8d;
+      width: 90%;
+      max-width: 400px;
+      z-index: 3;
+      text-shadow: 0 1px 2px rgba(0,0,0,0.1);
+      font-weight: bold;
+    }
+
+    /* Container utama */
+    .birthday-container {
+      flex: 1;
+      width: 100%;
+      max-width: 400px;
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      align-items: center;
+      padding: 10px;
+      box-sizing: border-box;
+      z-index: 2;
+    }
+
+    /* Canvas / Kertas tempat teks */
+    .paper {
+      background: white;
+      border-radius: 20px;
+      padding: 20px;
+      margin-bottom: 15px;
+      box-shadow: 0 6px 15px rgba(0,0,0,0.1);
+      width: 90%;
+      max-width: 360px;
+      position: relative;
+      border: 2px dashed #ffb6c1;
+    }
+
+    /* Teks dengan efek ketik */
+    .handwriting {
+      color: #ff4d8d;
+      font-size: 12px;
+      line-height: 1.3;
+      text-align: left;
+      white-space: pre-line;
+      letter-spacing: 0.8px;
+    }
+
+    /* GIF animasi bunga mekar */
+    .birthday-gif {
+      width: 180px;
+      border-radius: 16px;
+      box-shadow: 0 6px 12px rgba(0,0,0,0.1);
+      margin: 5px auto 10px;
+    }
+
+    /* Floating Hearts */
+    .hearts-floating {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      pointer-events: none;
+      z-index: 1;
+    }
+
+    .heart {
+      position: absolute;
+      font-size: 16px;
+      color: #ff69b4;
+      animation: fall linear forwards;
+      opacity: 0.7;
+    }
+
+    @keyframes fall {
+      0% { transform: translateY(-10vh) rotate(0deg); opacity: 0; }
+      10% { opacity: 1; }
+      90% { opacity: 1; }
+      100% { transform: translateY(100vh) rotate(360deg); opacity: 0; }
+    }
+
+    /* Hiasan lucu */
+    .cute {
+      position: absolute;
+      width: 40px;
+      opacity: 0.8;
+      filter: drop-shadow(2px 2px 4px rgba(0,0,0,0.2));
+      z-index: 2;
+    }
+    .cat { bottom: 20%; left: 10%; }
+    .rabbit { bottom: 20%; right: 10%; }
+
+    /* Back button */
+    .back-btn {
+      position: fixed;
+      bottom: 45px;
+      left: 50%;
+      transform: translateX(-50%);
+      padding: 12px 28px;
+      border: none;
+      border-radius: 30px;
+      background: #ff5d8f;
+      color: white;
+      font-size: 16px;
+      font-weight: bold;
+      cursor: pointer;
+      box-shadow: 0 4px 10px rgba(0,0,0,0.2);
+      transition: all 0.3s;
+      z-index: 10;
+    }
+
+    .back-btn:hover {
+      background: #ff4d8d;
+      transform: translateX(-50%) scale(1.05);
+    }
+  </style>
+</head>
+<body id="birthday-page">
+  <!-- Judul -->
+  <h1 id="page-title">PibesDayyManiesss 💖</h1>
+
+  <!-- Container Utama -->
+  <div class="birthday-container">
+    <!-- Canvas/Kertas -->
+    <div class="paper">
+      <div class="handwriting" id="typewriter"></div>
+    </div>
+
+    <!-- GIF Bunga Melekar -->
+    <img 
+      src="https://media.giphy.com/media/v1.Y2lkPTc5MGI3NjExeGZzNGwxcXpkcXA3ZXF4cjR1cGNzdnQyMXptb3UxMXI1b3lrbXQydyZlcD12MV9naWZzX3NlYXJjaCZjdD1n/LHZyixOnHwDDy/giphy.gif" 
+      alt="Beautiful blooming flowers"
+      class="birthday-gif"
+    >
+
+    <!-- Hiasan lucu -->
+    <img src="https://cdn-icons-png.flaticon.com/128/3075/3075563.png" alt="Cat" class="cute cat">
+    <img src="https://cdn-icons-png.flaticon.com/128/3075/3075596.png" alt="Rabbit" class="cute rabbit">
+  </div>
+
+  <!-- Tombol Kembali -->
+  <button onclick="goToMenu()" class="back-btn">Back to Menu</button>
+
+  <!-- Floating Hearts -->
+  <div class="hearts-floating" id="hearts-floating"></div>
+
+  <script>
+
+    // --- 🔊 BACKSOUND (Musik Latar) ---
+  const backgroundMusic = new Audio('sound/background-music.mp3'); // Pastikan file ini ada
+  backgroundMusic.loop = true;
+  backgroundMusic.volume = 0.3; // Sesuaikan volume (0.0 - 1.0)
+
+  // Saat halaman dimuat
+  window.addEventListener('load', () => {
+    const isMusicPlaying = localStorage.getItem('musicPlaying') === 'true';
+
+    if (isMusicPlaying) {
+      backgroundMusic.play().catch(e => {
+        console.log("Autoplay diblokir — menunggu interaksi pengguna", e);
+        // Jika autoplay gagal, bisa munculkan tombol "Play Music"
+      });
+    }
+  });
+
+  // Simpan status saat musik diputar/dijeda
+  backgroundMusic.onplay = () => {
+    localStorage.setItem('musicPlaying', 'true');
+  };
+
+  backgroundMusic.onpause = () => {
+    localStorage.setItem('musicPlaying', 'false');
+  };
+
+  // Fungsi untuk memaksa mainkan musik (jika diblokir)
+  function playMusic() {
+    backgroundMusic.play().catch(e => {
+      alert("Silakan klik untuk memutar musik.");
+    });
+  }
+
+    // Teks ucapan ulang tahun ala "maniess"
+    const text = `Selamatttt ulang tahunnn maniess,
+buat orangg yannggg inginn aku sayangg.
+
+Dihari spesialmu inii,
+aku ingin ucapinnn terimakasihh banyak
+untuk waktu dan semuanya.
+
+Aku juga ingin bilang kamu hebattt...
+udah jalanin hari hari yang lalu sampaii saat inii.
+semogaa kamu yang sekarang ini
+menjadi lebiiii dewasaa dan bijakk
+dalam masalahh atau apapun ituu.
+
+yang paling pentingggg,
+semoga dihari yang spesial ini
+akan ada hal hal baik yang datang untukk kamuuu...
+dan kitaa juga tentunyaa 😊
+
+meskipunn aku gada disana,
+aku seneng masi bisaa alamin hari iniii.
+aku harap ditahun tahun berikutnya
+masi bisa rayain ulang tahun kamuuu ya maniesss.
+
+sekali lagi happy birthdayy cantikkk 💖🎂✨`;
+
+    const typewriter = document.getElementById('typewriter');
+    let i = 0;
+
+    function typeWriter() {
+      if (i < text.length) {
+        typewriter.innerHTML += text.charAt(i);
+        i++;
+        setTimeout(typeWriter, 35); // Kecepatan mengetik (ms per karakter)
+      }
+    }
+
+    // Mulai efek ketik setelah 800ms
+    setTimeout(typeWriter, 800);
+
+    // === Floating Hearts ===
+    function createHeart() {
+      const heart = document.createElement('div');
+      heart.classList.add('heart');
+      heart.innerText = '❤️';
+      heart.style.left = Math.random() * 100 + 'vw';
+      heart.style.animationDuration = (4 + Math.random() * 3) + 's';
+      document.getElementById('hearts-floating').appendChild(heart);
+
+      setTimeout(() => heart.remove(), 10000);
+    }
+
+    setInterval(createHeart, 800);
+
+    // === Back to Menu ===
+    function goToMenu() {
+      window.location.href = "menu.html";
+    }
+  </script>
+</body>
+</html>
